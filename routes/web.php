@@ -10,6 +10,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReportController;
 
+Route::get('/ping', function () {
+    return 'pong';
+});
 // Главные страницы (доступны всем, включая неавторизованных)
 Route::get('/', [PageController::class, 'welcome'])->name('welcome');
 Route::get('/catalog', [PageController::class, 'catalog'])->name('catalog');
