@@ -1,22 +1,8 @@
-FROM richarvey/nginx-php-fpm:php84
+FROM thecodingmachine/laravel:php8.4-apache-node18
 
-COPY . .
+COPY . /app
 
-ENV SKIP_COMPOSER 0
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
-
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
-
-ENV COMPOSER_ALLOW_SUPERUSER 1
-
-# Устанавливаем зависимости и готовим приложение
-RUN composer install --no-dev --working-dir=/var/www/html && \
+RUN composer install --no-dev --optimize-autoloader && \
     php artisan config:cache && \
-    php artisan route:cache
-
-CMD ["/start.sh"]
+    php artisan route:cache && \
+    php artisan view:cache
