@@ -1,41 +1,38 @@
 FROM php:8.4-apache
 
-# Устанавливаем системные зависимости и расширения PHP
+# Установка расширений
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
-    zip \
     unzip \
-    git \
-    curl \
-    && docker-php-ext-install pdo pdo_pgsql zip \
-    && a2enmod rewrite
+    && docker-php-ext-install pdo pdo_pgsql zip
 
-# Устанавливаем Composer
+# Установка Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Устанавливаем рабочую директорию
-WORKDIR /var/www/html
+# Включение mod_rewrite
+RUN a2enmod rewrite
 
-# Копируем код проекта
-COPY . .
+# Копирование кода в стандартную папку Apache
+COPY . /var/www/html/
 
-# Устанавливаем зависимости Composer и кэшируем конфигурацию
-RUN composer install --no-dev --optimize-autoloader && \
+# Установка прав
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Явное указание DocumentRoot
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Настройка прав на папку public
+RUN chown -R www-data:www-data /var/www/html/public
+
+# Установка composer и кэширование конфигурации
+RUN composer install --no-dev --optimize-autoloader --working-dir=/var/www/html && \
     php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache
 
-# Настраиваем права доступа для storage и cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
-    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Копируем скрипт запуска
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-# Открываем порт 80
 EXPOSE 80
-
-# Команда запуска
-CMD ["/start.sh"]
+CMD ["apache2-foreground"]
