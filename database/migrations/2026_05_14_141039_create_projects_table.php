@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('complexity')->min(1)->max(5)->default(1);
             $table->foreignId('mentor_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('customer_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('template_id')->nullable()->constrained('project_templates')->nullOnDelete();
+            //    $table->foreignId('template_id')->nullable()->constrained('project_templates')->nullOnDelete();
             $table->timestamps();
         });
     }
