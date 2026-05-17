@@ -177,7 +177,6 @@
         }
         scrollToBottom();
 
-        // Перезагрузка области сообщений (сохраняет обработчики)
         function refreshMessages() {
             fetch(window.location.href)
                 .then(res => res.text())
@@ -193,7 +192,6 @@
                 });
         }
 
-        // Прикрепление обработчиков к кнопкам редактирования/удаления
         function attachMessageEvents() {
             document.querySelectorAll('.edit-message').forEach(btn => {
                 btn.removeEventListener('click', handleEditClick);
@@ -233,7 +231,6 @@
             });
         }
 
-        // Сохранение отредактированного сообщения
         document.getElementById('saveEditBtn').addEventListener('click', function() {
             const newText = document.getElementById('editMessageText').value.trim();
             if (!newText) return;
@@ -254,13 +251,10 @@
             });
         });
 
-        // Автообновление чата каждые 3 секунды
-        let lastUpdate = {{ $messages->last()?->id ?? 0 }};
         setInterval(() => {
             refreshMessages();
         }, 3000);
 
-        // Отправка сообщения без перезагрузки страницы
         document.getElementById('chatForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const form = e.target;
