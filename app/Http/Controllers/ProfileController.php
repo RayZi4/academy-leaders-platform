@@ -13,7 +13,7 @@ class ProfileController extends Controller
     public function show()
     {
         $user = auth()->user();
-        $projects = collect(); // пустая коллекция по умолчанию
+        $projects = [];
 
         if ($user->isStudent()) {
             $projects = $user->studentProjects()->with('project')->get();
@@ -24,7 +24,7 @@ class ProfileController extends Controller
         return view('profile.show', compact('user', 'projects'));
     }
 
-    // Показать профиль другого пользователя (только студента)
+    // Показать профиль другого пользователя (студента)
     public function showStudent(User $user)
     {
         if ($user->role !== 'student') {
@@ -47,10 +47,9 @@ class ProfileController extends Controller
         $user = auth()->user();
         $rules = [
             'bio' => 'nullable|string|max:1000',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // 2 MB
         ];
 
-        // Имя можно менять только не-организациям
         if (!$user->isCustomer()) {
             $rules['name'] = 'required|string|max:255';
         }

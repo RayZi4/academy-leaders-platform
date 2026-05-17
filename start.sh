@@ -8,10 +8,8 @@ chmod -R 777 storage bootstrap/cache
 echo "Creating storage link..."
 php artisan storage:link || true
 
-echo "Clearing config cache..."
+echo "Clearing and caching config..."
 php artisan config:clear
-
-echo "Caching config..."
 php artisan config:cache
 
 echo "Caching routes..."
