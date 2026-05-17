@@ -23,6 +23,9 @@
                             @error('email')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
+                            @if(session('error'))
+                                <div class="invalid-feedback d-block">{{ session('error') }}</div>
+                            @endif
                         </div>
 
                         <div class="mb-3">
@@ -45,9 +48,8 @@
                             <button type="submit" class="btn btn-primary btn-lg">Войти</button>
                         </div>
 
+                        {{-- Удалена ссылка "Забыли пароль" --}}
                         <div class="text-center mt-3">
-                            <a class="text-decoration-none small" href="{{ route('password.request') }}">Забыли пароль?</a>
-                            <span class="mx-1">|</span>
                             <a class="text-decoration-none small" href="{{ route('register') }}">Нет аккаунта? Регистрация</a>
                         </div>
                     </form>
