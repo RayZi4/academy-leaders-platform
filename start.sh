@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 cd /var/www/html
 
-echo "Setting permissions..."
-touch /var/www/html/storage/logs/laravel.log
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+echo "Creating avatar directory and setting permissions..."
+mkdir -p storage/app/public/avatars
+chmod -R 777 storage bootstrap/cache
 
-# СОЗДАЁМ СИМВОЛИЧЕСКУЮ ССЫЛКУ ДЛЯ ПУБЛИЧНОГО ДОСТУПА К ФАЙЛАМ (аватарки)
 echo "Creating storage link..."
 php artisan storage:link || true
 
-echo "Clearing and caching config..."
+echo "Clearing config cache..."
 php artisan config:clear
+
+echo "Caching config..."
 php artisan config:cache
 
 echo "Caching routes..."
